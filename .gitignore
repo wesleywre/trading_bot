@@ -1,0 +1,152 @@
+# === TRADING BOT GITIGNORE ===
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# === Virtual Environments ===
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# === IDE/Editors ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+logs/
+daemon.log
+trading_bot.log
+trading_bot_daemon.log
+
+# === Database Files ===
+*.db
+*.sqlite
+*.sqlite3
+market_data.db
+
+# === Backup Files ===
+backups/
+*.bak
+*.backup
+
+# === Temporary Files ===
+tmp/
+temp/
+.tmp/
+.temp/
+
+# === OS Generated ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# === Node.js (para o frontend) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+
+# === Environment Variables ===
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# === Trading Bot Specific ===
+# Dados de mercado (muito grandes para git)
+data/
+historical_data/
+
+# Logs (podem ser grandes)
+logs/
+
+# Configurações com dados sensíveis (manter apenas templates)
+config_production.yaml
+config_live.yaml
+
+# Arquivos de estado do bot
+bot_state.json
+positions.json
+trades_history.json
+
+# Certificados SSL (se houver)
+*.pem
+*.key
+*.crt
+
+# === Sistema de Deploy ===
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# === Monitoring ===
+prometheus_data/
+grafana_data/
+
+# === Cache ===
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# === Documentation Build ===
+docs/_build/
+site/
+
+# === Jupyter Notebooks ===
+.ipynb_checkpoints
+
+# === Configurações locais de desenvolvimento ===
+.local/
+local_config.yaml
+dev_config.yaml
+test_config.yaml
+
+# === Scripts de desenvolvimento (se houver dados sensíveis) ===
+deploy_keys/
+secrets/
+credentials/
+
+# === Arquivos gerados pelo sistema ===
+nohup.out
+*.pid
