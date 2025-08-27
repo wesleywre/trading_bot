@@ -1,4 +1,33 @@
-requirements.txt
-ccxt>=4.0.0
-pandas>=2.0.0
-colorama>=0.4.6
+# Trading Bot Dependencies
+
+# Core trading and exchange connectivity
+ccxt>=4.0.0                    # Cryptocurrency exchange integration
+pandas>=2.0.0                  # Data analysis and manipulation
+numpy>=1.24.0                  # Numerical computations for strategies
+
+# Configuration and environment
+PyYAML>=6.0.1                  # YAML configuration file parsing
+python-dotenv>=1.0.0           # Environment variables management
+
+# Real-time data and WebSocket
+websockets>=11.0.0             # WebSocket client for real-time market data
+aiohttp>=3.8.0                 # Async HTTP client (dependency for websockets)
+
+# Database and storage
+# sqlite3 is built-in to Python, no need to install
+
+# System monitoring and process management
+psutil>=5.9.0                  # System and process monitoring
+
+# User interface and logging
+colorama>=0.4.6                # Colored terminal output
+
+# Development and testing (optional)
+pytest>=7.4.0                  # Testing framework
+black>=23.0.0                  # Code formatting
+flake8>=6.0.0                  # Code linting
+
+# Optional: Additional analysis libraries
+# matplotlib>=3.7.0           # Plotting (uncomment if needed)
+# seaborn>=0.12.0              # Statistical plotting (uncomment if needed)
+# ta>=0.10.2                   # Technical analysis library (uncomment if needed)

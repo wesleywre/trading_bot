@@ -1,9 +1,17 @@
+"""Exchange management module for trading bot.
+
+This module provides:
+- ExchangeManager: manages connection to exchange and trading operations
+- Support for both real trading and simulation mode
+- Market data fetching and order execution functionality
+"""
+
 import logging
 from typing import Any, Dict
 
 import ccxt
 
-from market_simulator import get_simulated_ohlcv, get_simulated_ticker
+from market_simulator import get_simulated_ohlcv
 
 
 class ExchangeManager:
@@ -27,21 +35,41 @@ class ExchangeManager:
                 else "🔐 [CONFIG] Secret: (vazia)"
             )
 
+            # Força conexão real com Testnet se as chaves estão configuradas
             if not api_key or not secret or "your_" in api_key or "your_" in secret:
                 logging.warning("🟡 Chaves de API não configuradas, executando em modo simulação")
                 self.simulation_mode = True
                 self.exchange = None
             else:
                 logging.info("🔗 [CONNECT] Conectando à Binance testnet...")
+
+                # Garante que está em modo testnet
+                exchange_config["testnet"] = True
+                exchange_config["sandbox"] = True
+
                 self.exchange = ccxt.binance(exchange_config)
-                logging.info("🟢 [CONNECT] Conectado à exchange Binance (testnet)")
+
+                # Testa a conexão buscando o saldo
+                balance = self.exchange.fetch_balance()
+                logging.info(
+                    f"🟢 [CONNECT] Conectado à Binance Testnet - Saldo USDT: {balance['total'].get('USDT', 0)}"
+                )
+
+                # Força modo real (não simulação)
+                self.simulation_mode = False
 
         except Exception as e:
-            logging.warning(
-                f"🟡 [CONNECT] Erro na conexão com exchange, usando modo simulação: {e}"
-            )
-            self.simulation_mode = True
-            self.exchange = None
+            logging.error(f"� [CONNECT] Erro na conexão com exchange: {e}")
+            # Se falhar, ainda assim tenta conectar mas avisa o usuário
+            logging.warning("⚠️  Tentando continuar em modo real mesmo com erro...")
+            self.simulation_mode = False
+            try:
+                exchange_config["testnet"] = True
+                self.exchange = ccxt.binance(exchange_config)
+            except:
+                logging.error("❌ Falha total na conexão, usando modo simulação")
+                self.simulation_mode = True
+                self.exchange = None
 
         self.trading_fees = {}
         self._load_trading_fees()
@@ -69,16 +97,24 @@ class ExchangeManager:
 
     def get_balance(self, currency: str = "USDT") -> float:
         """Retorna o saldo de uma moeda específica."""
+        # Sempre tenta buscar saldo real primeiro
+        if self.exchange is not None:
+            try:
+                balance = self.exchange.fetch_balance()
+                real_balance = float(balance["total"].get(currency, 0))
+                logging.info(f"💰 [REAL] Saldo {currency}: {real_balance}")
+                return real_balance
+            except Exception as e:
+                logging.error(f"🔴 Erro ao buscar saldo real de {currency}: {str(e)}")
+
+        # Só usa simulação se não conseguir conectar
         if self.simulation_mode:
-            # Saldo simulado para teste
+            logging.warning(f"⚠️  [SIMULAÇÃO] Usando saldo simulado de {currency}: 10000.0")
             return 10000.0  # $10,000 USDT simulados
 
-        try:
-            balance = self.exchange.fetch_balance()
-            return float(balance["total"].get(currency, 0))
-        except Exception as e:
-            logging.error(f"\033[91mErro ao buscar saldo de {currency}: {str(e)}\033[0m")
-            return 0.0
+        # Se chegou aqui, é porque não está em simulação mas teve erro
+        logging.error(f"❌ Falha ao buscar saldo real de {currency}, retornando 0")
+        return 0.0
 
     def fetch_ohlcv(self, symbol: str, timeframe: str = "1h", limit: int = 1000):
         """Busca dados OHLCV do mercado."""
